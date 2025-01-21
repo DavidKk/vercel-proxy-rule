@@ -20,10 +20,15 @@ export function api(handle: (req: NextRequest) => Promise<Record<string, any>>) 
   }
 }
 
-export function plainText(handle: (req: NextRequest) => Promise<string>) {
-  return async (req: NextRequest) => {
+export interface Context<P = Record<string, string | string[]>> {
+  params: Promise<P>
+  searchParams: URLSearchParams
+}
+
+export function plainText<P>(handle: (req: NextRequest, context: Context<P>) => Promise<string>) {
+  return async (req: NextRequest, context: Context<P>) => {
     try {
-      const result = await handle(req)
+      const result = await handle(req, context)
       return new NextResponse(result, { status: 200 })
     } catch (error) {
       const message = stringifyUnknownError(error)

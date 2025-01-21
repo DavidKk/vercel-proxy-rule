@@ -4,7 +4,7 @@ import { fetchClashRules, updateClashRules } from '@/services/clash/rule'
 import { getGistInfo } from '@/services/gist'
 import type { ClashRule } from '@/services/clash/types'
 
-export async function getClashRule() {
+export async function getClashRules() {
   const { gistId, gistToken } = getGistInfo()
   return fetchClashRules({ gistId, gistToken })
 }

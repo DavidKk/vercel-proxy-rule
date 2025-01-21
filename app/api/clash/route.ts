@@ -1,10 +1,10 @@
 import type { NextRequest } from 'next/server'
 import { api, invalidArgument } from '@/services/route/api'
-import { getClashRule, putClashRules } from './rule'
+import { getClashRules, putClashRules } from './rule'
 import { isValidClashRule } from '@/services/clash/types'
 
 export const GET = api(async () => {
-  return getClashRule()
+  return getClashRules()
 })
 
 export const POST = api(async (req: NextRequest) => {

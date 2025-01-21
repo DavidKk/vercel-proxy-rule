@@ -1,9 +1,9 @@
-import { getClashRule } from '@/app/api/clash/rule'
+import { getClashRules } from '@/app/api/clash/rule'
 import { guid } from '@/utils/guid'
 import RuleManager from './RuleManager'
 
 export async function Clash() {
-  const { rules, actions } = await getClashRule()
+  const { rules, actions } = await getClashRules()
   const rulesWithId = rules.map((rule) => ({ ...rule, id: guid() }))
 
   return (
