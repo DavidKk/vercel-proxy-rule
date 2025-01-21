@@ -16,7 +16,12 @@ export const GET = plainText<{ type: string }>(async (_, { params }) => {
         const content = stringifyClashRule(rule)
         const parts = content.split(',')
         const index = parts.indexOf(rule.action)
-        yield parts.slice(0, index).join(',')
+        const result = parts.slice(0, index).join(',')
+        if (!result) {
+          continue
+        }
+
+        yield result
       }
     })()
   )
