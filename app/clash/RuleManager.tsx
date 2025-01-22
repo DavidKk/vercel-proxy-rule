@@ -29,7 +29,9 @@ export default function RuleManager(props: RuleManagerProps) {
   const [errorMessage, setErrorMessage] = useState('')
   const focusNextRef = useRef<string>(null)
   const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor))
+  const listRef = useRef<List>(null)
   const [listHeight, setListHeight] = useState(0)
+
   const isFilterMode = filteredRules.length !== rules.length
 
   const handleDragEnd = (event: any) => {
@@ -112,10 +114,14 @@ export default function RuleManager(props: RuleManagerProps) {
       const id = focusNextRef.current
       focusNextRef.current = null
 
-      const input = document.querySelector<HTMLInputElement>(`input[data-id="${id}"]`)
-      input && input.focus()
+      listRef.current?.scrollToItem(rules.length, 'end')
+
+      setTimeout(() => {
+        const input = document.querySelector<HTMLInputElement>(`input[data-id="${id}"]`)
+        input && input.focus()
+      }, 0)
     }
-  }, [rules])
+  }, [rules.length])
 
   useEffect(() => {
     const updateHeight = () => {
@@ -185,7 +191,7 @@ export default function RuleManager(props: RuleManagerProps) {
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext items={rules.map((rule) => rule.id)} strategy={verticalListSortingStrategy}>
             <div className="flex flex-wrap flex-col gap-2">
-              <List layout="vertical" itemCount={finalRules.length} itemSize={50} height={listHeight} width="auto">
+              <List layout="vertical" itemCount={finalRules.length} itemSize={50} height={listHeight} width="auto" ref={listRef}>
                 {({ index, style }) => (
                   <div className="flex" style={style}>
                     {renderRule(finalRules[index], index)}
