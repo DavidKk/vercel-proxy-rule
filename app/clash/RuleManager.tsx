@@ -23,14 +23,13 @@ export interface RuleManagerProps {
 
 export default function RuleManager(props: RuleManagerProps) {
   const { rules: defaultRules, actions } = props
-  const [rules, setRules] = useState(defaultRules)
+  const [rules, setRules] = useState([...defaultRules])
   const [filteredRules, setFilteredRules] = useState(rules)
   const [showSuccess, toggleSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const focusNextRef = useRef<string>(null)
   const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor))
   const [listHeight, setListHeight] = useState(0)
-
   const isFilterMode = filteredRules.length !== rules.length
 
   const handleDragEnd = (event: any) => {
@@ -54,8 +53,9 @@ export default function RuleManager(props: RuleManagerProps) {
     const id = guid()
     const newRule: ClashRule = { id, type: 'DOMAIN-SUFFIX', value: '', action: 'DIRECT' }
     setRules((prev) => {
-      prev.splice(index, 0, newRule)
-      return [...prev]
+      const cloned = [...prev]
+      cloned.splice(index, 0, newRule)
+      return cloned
     })
 
     focusNextRef.current = id
@@ -69,6 +69,11 @@ export default function RuleManager(props: RuleManagerProps) {
     focusNextRef.current = id
   }
 
+  const reset = () => {
+    setRules([...defaultRules])
+    setFilteredRules([...defaultRules])
+  }
+
   const removeRule = (id: string) => {
     if (!confirm(`Are you sure you want to remove this rule?`)) {
       return
@@ -77,20 +82,17 @@ export default function RuleManager(props: RuleManagerProps) {
     setRules((prev) => prev.filter((rule) => rule.id !== id))
   }
 
-  const { run: submit, loading: submitting } = useRequest(
-    () => putClashRules(rules),
-    {
-      manual: true,
-      onSuccess: () => {
-        toggleSuccess(true)
-        setErrorMessage('')
-      },
-      onError: (error) => {
-        setErrorMessage(error.message)
-        toggleSuccess(false)
-      },
-    }
-  )
+  const { run: submit, loading: submitting } = useRequest(() => putClashRules(rules), {
+    manual: true,
+    onSuccess: () => {
+      toggleSuccess(true)
+      setErrorMessage('')
+    },
+    onError: (error) => {
+      setErrorMessage(error.message)
+      toggleSuccess(false)
+    },
+  })
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -203,7 +205,11 @@ export default function RuleManager(props: RuleManagerProps) {
 
         <div className="flex gap-2 ml-auto">
           <button onClick={addRule} className="ms-auto px-4 py-2 bg-blue-500 cursor-pointer text-sm text-white rounded-sm hover:bg-blue-600" type="button">
-            Add ClashRule
+            Add
+          </button>
+
+          <button onClick={reset} className="px-4 py-2 bg-gray-500 cursor-pointer text-sm text-white rounded-sm hover:bg-gray-600" type="button">
+            Reset
           </button>
 
           <button
