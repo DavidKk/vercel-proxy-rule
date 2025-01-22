@@ -77,17 +77,20 @@ export default function RuleManager(props: RuleManagerProps) {
     setRules((prev) => prev.filter((rule) => rule.id !== id))
   }
 
-  const { run: submit, loading: submitting } = useRequest(() => putClashRules(rules), {
-    manual: true,
-    onSuccess: () => {
-      toggleSuccess(true)
-      setErrorMessage('')
-    },
-    onError: (error) => {
-      setErrorMessage(error.message)
-      toggleSuccess(false)
-    },
-  })
+  const { run: submit, loading: submitting } = useRequest(
+    () => putClashRules(rules),
+    {
+      manual: true,
+      onSuccess: () => {
+        toggleSuccess(true)
+        setErrorMessage('')
+      },
+      onError: (error) => {
+        setErrorMessage(error.message)
+        toggleSuccess(false)
+      },
+    }
+  )
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -176,12 +179,16 @@ export default function RuleManager(props: RuleManagerProps) {
     <form onSubmit={handleSubmit}>
       <FilterBar rules={rules} onFilter={setFilteredRules} />
 
-      <div className="h-[70vh] md:h-[60vh] mx-auto">
+      <div className="mx-auto">
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext items={rules.map((rule) => rule.id)} strategy={verticalListSortingStrategy}>
             <div className="flex flex-wrap flex-col gap-2">
-              <List layout='vertical' itemCount={finalRules.length} itemSize={50} height={listHeight} width="auto">
-                {({ index, style }) => <div className="flex" style={style}>{renderRule(finalRules[index], index)}</div>}
+              <List layout="vertical" itemCount={finalRules.length} itemSize={50} height={listHeight} width="auto">
+                {({ index, style }) => (
+                  <div className="flex" style={style}>
+                    {renderRule(finalRules[index], index)}
+                  </div>
+                )}
               </List>
             </div>
           </SortableContext>

@@ -1,11 +1,12 @@
 import { stringify } from 'yaml'
-import { plainText } from '@/services/route/api'
 import { getClashRules } from '@/app/api/clash/rule'
 import { stringifyClashRule } from '@/services/clash/types'
+import { plainText } from '@/initializer/controller'
+import { trimAction } from '@/initializer/wrapper'
 
 export const GET = plainText<{ type: string }>(async (_, { params }) => {
   const { type } = await params
-  const { rules } = await getClashRules()
+  const { rules } = await trimAction(getClashRules)()
   const payload = Array.from(
     (function* () {
       for (const rule of rules) {

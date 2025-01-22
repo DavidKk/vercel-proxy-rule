@@ -3,13 +3,14 @@
 import { fetchClashRules, updateClashRules } from '@/services/clash/rule'
 import { getGistInfo } from '@/services/gist'
 import type { ClashRule } from '@/services/clash/types'
+import { withAuthAction } from '@/initializer/wrapper'
 
-export async function getClashRules() {
+export const getClashRules = withAuthAction(async () => {
   const { gistId, gistToken } = getGistInfo()
   return fetchClashRules({ gistId, gistToken })
-}
+})
 
-export async function putClashRules(rules: ClashRule[]) {
+export const putClashRules = withAuthAction(async (rules: ClashRule[]) => {
   const { gistId, gistToken } = getGistInfo()
-  return updateClashRules({ gistId, gistToken, rules })
-}
+  await updateClashRules({ gistId, gistToken, rules })
+})

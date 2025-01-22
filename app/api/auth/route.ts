@@ -1,5 +1,6 @@
-import { api, success } from '@/services/route/api'
+import { api } from '@/initializer/controller'
 import { login } from './login'
+import { jsonSuccess } from '@/initializer/response'
 
 export const POST = api(async (req) => {
   const { username, password } = await req.json()
@@ -8,5 +9,5 @@ export const POST = api(async (req) => {
   const headers = new Headers()
   headers.append('Set-Cookie', cookie)
 
-  return success(null, { headers })
+  return jsonSuccess(null, { headers })
 })

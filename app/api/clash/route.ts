@@ -1,22 +1,28 @@
 import type { NextRequest } from 'next/server'
-import { api, invalidArgument } from '@/services/route/api'
-import { getClashRules, putClashRules } from './rule'
 import { isValidClashRule } from '@/services/clash/types'
+import { api } from '@/initializer/controller'
+import { jsonInvalidParameters } from '@/initializer/response'
+import { trimAction, withAuthHandler } from '@/initializer/wrapper'
+import { getClashRules, putClashRules } from './rule'
 
-export const GET = api(async () => {
-  return getClashRules()
-})
+export const GET = api(
+  withAuthHandler(async () => {
+    return trimAction(getClashRules)()
+  })
+)
 
-export const POST = api(async (req: NextRequest) => {
-  const { rules } = await req.json()
-  if (!Array.isArray(rules)) {
-    return invalidArgument('rules must be an array')
-  }
+export const POST = api(
+  withAuthHandler(async (req: NextRequest) => {
+    const { rules } = await req.json()
+    if (!Array.isArray(rules)) {
+      return jsonInvalidParameters('rules must be an array')
+    }
 
-  if (rules.find(isValidClashRule)) {
-    return invalidArgument('invalid rule')
-  }
+    if (rules.find(isValidClashRule)) {
+      return jsonInvalidParameters('invalid rule')
+    }
 
-  await putClashRules(rules)
-  return {}
-})
+    await trimAction(putClashRules)(rules)
+    return {}
+  })
+)

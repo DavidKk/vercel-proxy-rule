@@ -32,10 +32,11 @@ export default function SortableItem(props: SortableItemProps) {
         title={disabled ? 'Unable to reorder in filter mode' : 'Drag to reorder'}
         {...(isReady && !disabled ? listeners : {})}
         {...(isReady && !disabled ? attributes : {})}
-      >☰</span>
+      >
+        ☰
+      </span>
 
       {children}
     </div>
   )
 }
-
