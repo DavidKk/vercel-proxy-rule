@@ -15,6 +15,7 @@ import SortableItem from './SortableItem'
 import { RULE_TYPE } from './constants'
 import { FilterBar } from './FilterBar'
 import type { ClashRule } from './types'
+import { isValidClashRule } from '@/services/clash/types'
 
 export interface RuleManagerProps {
   rules: ClashRule[]
@@ -29,6 +30,7 @@ export default function RuleManager(props: RuleManagerProps) {
   const [errorMessage, setErrorMessage] = useState('')
   const focusNextRef = useRef<string>(null)
   const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor))
+  const formRef = useRef<HTMLFormElement>(null)
   const listRef = useRef<List>(null)
   const [listHeight, setListHeight] = useState(0)
 
@@ -96,13 +98,32 @@ export default function RuleManager(props: RuleManagerProps) {
     },
   })
 
+  const scrollToRule = (index: number) => {
+    listRef.current?.scrollToItem(index, 'end')
+
+    setTimeout(() => {
+      if (formRef.current?.checkValidity()) {
+        return
+      }
+
+      formRef.current?.reportValidity()
+    }, 0)
+  }
+
+  const checkFormValidity = () => {
+    const index = rules.findIndex((rule) => !isValidClashRule(rule))
+    if (index === -1) {
+      return true
+    }
+
+    scrollToRule(index)
+  }
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     event.stopPropagation()
 
-    const form = event.currentTarget as HTMLFormElement
-    if (!form.checkValidity()) {
-      form.reportValidity()
+    if (!checkFormValidity()) {
       return
     }
 
@@ -114,12 +135,8 @@ export default function RuleManager(props: RuleManagerProps) {
       const id = focusNextRef.current
       focusNextRef.current = null
 
-      listRef.current?.scrollToItem(rules.length, 'end')
-
-      setTimeout(() => {
-        const input = document.querySelector<HTMLInputElement>(`input[data-id="${id}"]`)
-        input && input.focus()
-      }, 0)
+      const index = rules.findIndex((rule) => rule.id === id)
+      scrollToRule(index)
     }
   }, [rules.length])
 
@@ -184,7 +201,7 @@ export default function RuleManager(props: RuleManagerProps) {
 
   const finalRules = isFilterMode ? filteredRules : rules
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} ref={formRef}>
       <FilterBar rules={rules} onFilter={setFilteredRules} />
 
       <div className="mx-auto">

@@ -2,7 +2,7 @@
 
 import { fetchClashRules, updateClashRules } from '@/services/clash/rule'
 import { getGistInfo } from '@/services/gist'
-import type { ClashRule } from '@/services/clash/types'
+import { isValidClashRule, type ClashRule } from '@/services/clash/types'
 import { withAuthAction } from '@/initializer/wrapper'
 
 export const getClashRules = withAuthAction(async () => {
@@ -12,5 +12,12 @@ export const getClashRules = withAuthAction(async () => {
 
 export const putClashRules = withAuthAction(async (rules: ClashRule[]) => {
   const { gistId, gistToken } = getGistInfo()
+
+  for (const rule of rules) {
+    if (!isValidClashRule(rule)) {
+      throw new Error('Invalid rule')
+    }
+  }
+
   await updateClashRules({ gistId, gistToken, rules })
 })

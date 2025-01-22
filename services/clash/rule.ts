@@ -64,8 +64,16 @@ export async function updateClashRules(params: UpdateClashRulesParams) {
   const { gistId, gistToken, rules } = params
   const { config } = await fetchClashRules({ gistId, gistToken })
 
-  const filterRules = rules.map((rule) => stringifyClashRule(rule)).filter(Boolean)
-  const content = stringify({ ...config, rules: filterRules })
+  const parts = []
+  for (const rule of rules) {
+    const content = stringifyClashRule(rule)
+    if (!content) {
+      continue
+    }
 
+    parts.push(content)
+  }
+
+  const content = stringify({ ...config, rules: parts })
   await writeGistFile({ gistId, gistToken, file: CLASH_CONFIG_FILE, content })
 }
