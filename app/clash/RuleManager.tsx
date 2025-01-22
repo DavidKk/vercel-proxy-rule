@@ -1,32 +1,37 @@
 'use client'
 
+import { useRequest } from 'ahooks'
 import React, { useEffect, useRef, useState } from 'react'
+import { FixedSizeList as List } from 'react-window'
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
 import { BarsArrowUpIcon, TrashIcon } from '@heroicons/react/16/solid'
-import type { ClashRule } from '@/services/clash/types'
 import { putClashRules } from '@/app/api/clash/rule'
 import { Spinner } from '@/components/Spinner'
 import Alert from '@/components/Alert'
+import ClearableSelect from '@/components/ClearableSelect'
 import { guid } from '@/utils/guid'
 import SortableItem from './SortableItem'
 import { RULE_TYPE } from './constants'
-import { useRequest } from 'ahooks'
-
-export type Rule = ClashRule & { id: string }
+import { FilterBar } from './FilterBar'
+import type { ClashRule } from './types'
 
 export interface RuleManagerProps {
-  rules: Rule[]
+  rules: ClashRule[]
   actions: string[]
 }
 
 export default function RuleManager(props: RuleManagerProps) {
   const { rules: defaultRules, actions } = props
   const [rules, setRules] = useState(defaultRules)
+  const [filteredRules, setFilteredRules] = useState(rules)
   const [showSuccess, toggleSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const focusNextRef = useRef<string>(null)
   const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor))
+  const [listHeight, setListHeight] = useState(0)
+
+  const isFilterMode = filteredRules.length !== rules.length
 
   const handleDragEnd = (event: any) => {
     const { active, over } = event
@@ -47,7 +52,7 @@ export default function RuleManager(props: RuleManagerProps) {
 
   const prependRule = (index: number) => {
     const id = guid()
-    const newRule: Rule = { id, type: 'DOMAIN-SUFFIX', value: '', action: 'DIRECT' }
+    const newRule: ClashRule = { id, type: 'DOMAIN-SUFFIX', value: '', action: 'DIRECT' }
     setRules((prev) => {
       prev.splice(index, 0, newRule)
       return [...prev]
@@ -58,7 +63,7 @@ export default function RuleManager(props: RuleManagerProps) {
 
   const addRule = () => {
     const id = guid()
-    const newRule: Rule = { id, type: 'DOMAIN-SUFFIX', value: '', action: 'DIRECT' }
+    const newRule: ClashRule = { id, type: 'DOMAIN-SUFFIX', value: '', action: 'DIRECT' }
     setRules((prev) => [...prev, newRule])
 
     focusNextRef.current = id
@@ -107,20 +112,23 @@ export default function RuleManager(props: RuleManagerProps) {
     }
   }, [rules])
 
-  const renderRule = (rule: Rule, index: number) => {
+  useEffect(() => {
+    const updateHeight = () => {
+      setListHeight(window.innerHeight * 0.6)
+    }
+
+    updateHeight()
+    window.addEventListener('resize', updateHeight)
+
+    return () => {
+      window.removeEventListener('resize', updateHeight)
+    }
+  }, [])
+
+  const renderRule = (rule: ClashRule, index: number) => {
     return (
-      <SortableItem key={rule.id} id={rule.id}>
-        <select
-          value={rule.type}
-          onChange={(e) => handleRuleChange(rule.id, 'type', e.target.value)}
-          className="h-8 text-sm border rounded-sm box-border pl-1 md:pl-3 w-full md:w-auto"
-        >
-          {RULE_TYPE.map((type) => (
-            <option key={type} value={type}>
-              {type}
-            </option>
-          ))}
-        </select>
+      <SortableItem disabled={isFilterMode} key={rule.id} id={rule.id}>
+        <ClearableSelect value={rule.type} options={RULE_TYPE.map((type) => ({ label: type, value: type }))} onChange={(value) => handleRuleChange(rule.id, 'type', value)} />
 
         {rule.type === 'MATCH' ? (
           <input value="" placeholder="None" className="w-full h-8 text-sm border rounded-sm box-border px-3" disabled />
@@ -128,7 +136,7 @@ export default function RuleManager(props: RuleManagerProps) {
           <input
             type="text"
             value={rule.value}
-            onChange={(e) => handleRuleChange(rule.id, 'value', e.target.value)}
+            onChange={(event) => handleRuleChange(rule.id, 'value', event.target.value)}
             placeholder="Value"
             className="w-full h-8 text-sm border rounded-sm box-border px-3"
             required
@@ -136,22 +144,16 @@ export default function RuleManager(props: RuleManagerProps) {
           />
         )}
 
-        <select
+        <ClearableSelect
           value={rule.action}
-          onChange={(e) => handleRuleChange(rule.id, 'action', e.target.value)}
-          className="ml-auto flex-basis h-8 text-sm border rounded-sm box-border pl-1 md:pl-3 w-full md:w-auto"
-        >
-          {actions.map((action) => (
-            <option key={action} value={action}>
-              {action}
-            </option>
-          ))}
-        </select>
+          options={actions.map((action) => ({ label: action, value: action }))}
+          onChange={(value) => handleRuleChange(rule.id, 'action', value)}
+        />
 
         <button
           onClick={() => prependRule(index)}
           className="flex-basis h-8 text-sm bg-orange-500 text-white rounded-sm hover:bg-orange-600 px-4"
-          aria-label="Prepend Rule"
+          aria-label="Prepend ClashRule"
           type="button"
         >
           <BarsArrowUpIcon className="h-4 w-4 text-white" />
@@ -160,7 +162,7 @@ export default function RuleManager(props: RuleManagerProps) {
         <button
           onClick={() => removeRule(rule.id)}
           className="flex-basis h-8 text-sm bg-red-500 text-white rounded-sm hover:bg-red-600 px-4"
-          aria-label="Remove Rule"
+          aria-label="Remove ClashRule"
           type="button"
         >
           <TrashIcon className="h-4 w-4 text-white" />
@@ -169,12 +171,19 @@ export default function RuleManager(props: RuleManagerProps) {
     )
   }
 
+  const finalRules = isFilterMode ? filteredRules : rules
   return (
     <form onSubmit={handleSubmit}>
-      <div className="h-[70vh] md:h-[60vh] overflow-auto overflow-x-hidden mx-auto">
+      <FilterBar rules={rules} onFilter={setFilteredRules} />
+
+      <div className="h-[70vh] md:h-[60vh] mx-auto">
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext items={rules.map((rule) => rule.id)} strategy={verticalListSortingStrategy}>
-            <div className="flex flex-wrap flex-col gap-2">{rules.map(renderRule)}</div>
+            <div className="flex flex-wrap flex-col gap-2">
+              <List itemCount={finalRules.length} itemSize={50} height={listHeight} width="100%">
+                {({ index, style }) => <div style={style}>{renderRule(finalRules[index], index)}</div>}
+              </List>
+            </div>
           </SortableContext>
         </DndContext>
       </div>
@@ -187,7 +196,7 @@ export default function RuleManager(props: RuleManagerProps) {
 
         <div className="flex gap-2 ml-auto">
           <button onClick={addRule} className="ms-auto px-4 py-2 bg-blue-500 cursor-pointer text-sm text-white rounded-sm hover:bg-blue-600" type="button">
-            Add Rule
+            Add ClashRule
           </button>
 
           <button
