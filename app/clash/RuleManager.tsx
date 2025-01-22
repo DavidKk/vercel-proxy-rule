@@ -131,14 +131,14 @@ export default function RuleManager(props: RuleManagerProps) {
         <ClearableSelect value={rule.type} options={RULE_TYPE.map((type) => ({ label: type, value: type }))} onChange={(value) => handleRuleChange(rule.id, 'type', value)} />
 
         {rule.type === 'MATCH' ? (
-          <input value="" placeholder="None" className="w-full h-8 text-sm border rounded-sm box-border px-3" disabled />
+          <input value="" placeholder="None" className="flex-grow h-8 text-sm border rounded-sm box-border px-3" disabled />
         ) : (
           <input
             type="text"
             value={rule.value}
             onChange={(event) => handleRuleChange(rule.id, 'value', event.target.value)}
             placeholder="Value"
-            className="w-full h-8 text-sm border rounded-sm box-border px-3"
+            className="flex-grow h-8 text-sm border rounded-sm box-border px-3"
             required
             data-id={rule.id}
           />
@@ -180,8 +180,8 @@ export default function RuleManager(props: RuleManagerProps) {
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext items={rules.map((rule) => rule.id)} strategy={verticalListSortingStrategy}>
             <div className="flex flex-wrap flex-col gap-2">
-              <List itemCount={finalRules.length} itemSize={50} height={listHeight} width="100%">
-                {({ index, style }) => <div style={style}>{renderRule(finalRules[index], index)}</div>}
+              <List layout='vertical' itemCount={finalRules.length} itemSize={50} height={listHeight} width="auto">
+                {({ index, style }) => <div className="flex" style={style}>{renderRule(finalRules[index], index)}</div>}
               </List>
             </div>
           </SortableContext>

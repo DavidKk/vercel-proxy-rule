@@ -25,17 +25,17 @@ export default function SortableItem(props: SortableItemProps) {
   }, [])
 
   return (
-    <div className="border p-2 rounded-sm shadow flex items-center gap-2 bg-white" ref={setNodeRef} style={style}>
+    <div className="min-w-full flex items-center shrink-0 gap-2 p-2 border rounded-sm shadow bg-white" ref={setNodeRef} style={style}>
       <span
         className={`hidden md:flex items-center justify-center px-1 cursor-grab text-2xl text-gray-500 hover:text-gray-700 ${disabled ? 'cursor-not-allowed opacity-50 hover:text-gray-500' : ''}`}
         aria-label="Drag to reorder"
         title={disabled ? 'Unable to reorder in filter mode' : 'Drag to reorder'}
         {...(isReady && !disabled ? listeners : {})}
         {...(isReady && !disabled ? attributes : {})}
-      >
-        ☰
-      </span>
+      >☰</span>
+
       {children}
     </div>
   )
 }
+

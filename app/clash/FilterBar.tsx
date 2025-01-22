@@ -43,7 +43,7 @@ export function FilterBar(props: FilterBarProps) {
   }, [rules, valueFilter, actionFilter, typeFilter, onFilter])
 
   return (
-    <div className="flex flex-col sm:flex-row gap-2 justify-end py-2 px-4 bg-gray-100 rounded-sm shadow-md">
+    <div className="flex gap-2 justify-start sm:justify-end overflow-x-auto mb-2 p-2 sm:pb-2 bg-gray-100 rounded-sm shadow-md">
       <ClearableSelect
         value={actionFilter}
         options={uniqueActions.map((action) => ({ value: action, label: action }))}
@@ -67,7 +67,7 @@ export function FilterBar(props: FilterBarProps) {
       />
 
       <button
-        className="h-8 text-sm border-gray-300 border rounded-sm box-border px-3"
+        className="h-8 flex items-center justify-center text-sm border-gray-300 border rounded-sm box-border px-3"
         onClick={() => {
           setValueFilter('')
           setActionFilter('')
