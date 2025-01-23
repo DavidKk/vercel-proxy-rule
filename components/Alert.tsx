@@ -1,36 +1,62 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useInterval } from 'ahooks'
+import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react'
 
 export interface AlertProps {
-  type?: 'success' | 'error'
-  message: string
-  onClear: () => void
   duration?: number
 }
 
-export default function Alert(props: AlertProps) {
-  const { type = 'success', message, onClear, duration = 4 } = props
-  const [count = 1000, setCount] = useState(duration)
+interface ShowOptions {
+  type?: 'success' | 'error'
+}
 
-  const clearInterval = useInterval(() => {
-    setCount((count) => count - 1)
-  }, 1e3)
+export interface AlertImperativeHandler {
+  show: (message: string, options?: ShowOptions) => Promise<void>
+}
 
-  useEffect(() => {
-    if (count <= 0) {
-      clearInterval()
-      onClear()
-    }
-  }, [count])
+export default forwardRef<AlertImperativeHandler, AlertProps>(function Alert(props: AlertProps, ref) {
+  const { duration = 0 } = props
+
+  const [type, setType] = useState('success')
+  const [message, setMessage] = useState('')
+  const [count, setCount] = useState(duration)
+  const timerRef = useRef<number | NodeJS.Timeout>(null)
+
+  const show = useCallback((message: string, options?: ShowOptions) => {
+    return new Promise<void>((resolve) => {
+      const { type = 'success' } = options ?? {}
+
+      setType(type)
+      setMessage(message)
+      setCount(3)
+
+      timerRef.current = setInterval(() => {
+        setCount((count) => {
+          if (count <= 1) {
+            clearInterval(timerRef.current!)
+
+            resolve()
+            return 0
+          }
+
+          return count - 1
+        })
+      }, 1e3)
+    })
+  }, [])
+
+  useImperativeHandle(ref, () => ({ show }))
+
+  if (count <= 0) {
+    return null
+  }
 
   return (
     <div
-      className={`w-full flex px-3 py-2 text-sm text-white bg-${type === 'success' ? 'green' : 'red'}-500 rounded-sm opacity-100 animate-fade-out`}
-      style={{ animationDelay: '3s' }}
+      className={`w-full flex px-3 py-2 text-sm text-white ${type === 'success' ? 'bg-green-500' : 'bg-red-500'} rounded-sm opacity-100 animate-fade-out`}
+      style={{ animationDelay: '2.8s' }}
     >
       {message} <span className="ml-auto">{count}s</span>
     </div>
   )
-}
+})

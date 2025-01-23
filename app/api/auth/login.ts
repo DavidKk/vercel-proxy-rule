@@ -3,8 +3,9 @@
 import { serialize } from 'cookie'
 import { generateToken } from '@/utils/jwt'
 import { AUTH_TOKEN_NAME } from './constants'
+import { verify2fa } from '@/services/2fa'
 
-export async function login(username: string, password: string) {
+export async function login(username: string, password: string, token: string) {
   if (!username) {
     throw new Error('Username is required')
   }
@@ -17,8 +18,15 @@ export async function login(username: string, password: string) {
     throw new Error('Invalid username or password')
   }
 
-  const token = generateToken({ authenticated: true })
-  const cookie = serialize(AUTH_TOKEN_NAME, token, {
+  const secret = process.env.ACCESS_2FA_SECRET
+  if (secret && !(token && (await verify2fa({ token, secret })))) {
+    // eslint-disable-next-line no-console
+    console.warn('Invalid 2FA token')
+    throw new Error('Invalid username or password')
+  }
+
+  const authToken = generateToken({ authenticated: true })
+  const cookie = serialize(AUTH_TOKEN_NAME, authToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     maxAge: 24 * 60 * 60,

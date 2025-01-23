@@ -8,6 +8,7 @@ import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-ki
 import { BarsArrowUpIcon, TrashIcon } from '@heroicons/react/16/solid'
 import { putClashRules } from '@/app/api/clash/rule'
 import { Spinner } from '@/components/Spinner'
+import type { AlertImperativeHandler } from '@/components/Alert'
 import Alert from '@/components/Alert'
 import ClearableSelect from '@/components/ClearableSelect'
 import { guid } from '@/utils/guid'
@@ -26,8 +27,7 @@ export default function RuleManager(props: RuleManagerProps) {
   const { rules: defaultRules, actions } = props
   const [rules, setRules] = useState([...defaultRules])
   const [filteredRules, setFilteredRules] = useState(rules)
-  const [showSuccess, toggleSuccess] = useState(false)
-  const [errorMessage, setErrorMessage] = useState('')
+  const alertRef = useRef<AlertImperativeHandler>(null)
   const focusNextRef = useRef<string>(null)
   const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor))
   const formRef = useRef<HTMLFormElement>(null)
@@ -89,12 +89,10 @@ export default function RuleManager(props: RuleManagerProps) {
   const { run: submit, loading: submitting } = useRequest(() => putClashRules(rules), {
     manual: true,
     onSuccess: () => {
-      toggleSuccess(true)
-      setErrorMessage('')
+      alertRef.current?.show('Save Success')
     },
     onError: (error) => {
-      setErrorMessage(error.message)
-      toggleSuccess(false)
+      alertRef.current?.show(error.message, { type: 'error' })
     },
   })
 
@@ -222,8 +220,7 @@ export default function RuleManager(props: RuleManagerProps) {
 
       <footer className="flex gap-2 mt-4">
         <div className="flex flex-col flex-grow">
-          {showSuccess && <Alert type="success" message="Save Success" onClear={() => toggleSuccess(false)} />}
-          {errorMessage && <Alert type="error" message={errorMessage} onClear={() => setErrorMessage('')} />}
+          <Alert ref={alertRef} />
         </div>
 
         <div className="flex gap-2 ml-auto">
