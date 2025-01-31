@@ -1,4 +1,4 @@
-import type { GFWRule} from '@/services/gfwlist/parse'
+import type { GFWRule } from '@/services/gfwlist/parse'
 import { parseGFWList } from '@/services/gfwlist/parse'
 
 describe('parseGFWList', () => {
