@@ -18,7 +18,7 @@ export const GET = plainText<{ type: string }>(async (_, { params }) => {
   }
 
   const payload = Array.from(
-    (function* () {
+    new Set((function* () {
       for (const rule of rules) {
         if (rule.action.toUpperCase() !== upperType) {
           continue
@@ -34,7 +34,7 @@ export const GET = plainText<{ type: string }>(async (_, { params }) => {
 
         yield result
       }
-    })()
+    })())
   )
 
   return stringify({ payload })

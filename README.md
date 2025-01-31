@@ -5,6 +5,7 @@
 Centralized management and generation of remote proxy rules, suitable for unified rule management across multiple clients.
 
 - **Supported Clients**: Currently supports Clash only. Ensure your client supports `RULE-SET`.
+- **Supported Rules**: Supports gfwlist rules (automatically merged into proxy rules, cannot be managed separately).
 
 ## Deploy to Vercel
 
