@@ -1,6 +1,6 @@
 import { api } from '@/initializer/controller'
-import { login } from './login'
 import { jsonSuccess } from '@/initializer/response'
+import { login } from './login'
 
 export const POST = api(async (req) => {
   const { username, password, token } = await req.json()

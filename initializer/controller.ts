@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { stringifyUnknownError } from '@/utils/response'
+import { isStandardResponse, standardResponseError, stringifyUnknownError } from './response'
 
 export interface Context {
   params: Promise<any>
@@ -23,8 +23,20 @@ export function api(handle: (req: NextRequest, context: Context) => Promise<Reco
       const headers = 'headers' in result ? result.headers : {}
       return NextResponse.json(result, { status, headers })
     } catch (error) {
-      const message = stringifyUnknownError(error)
-      return NextResponse.json(message, { status: 500 })
+      if (error instanceof NextResponse) {
+        return error
+      }
+
+      const result = (() => {
+        if (isStandardResponse(error)) {
+          return error
+        }
+
+        const message = stringifyUnknownError(error)
+        return standardResponseError(message)
+      })()
+
+      return NextResponse.json(result, { status: 500 })
     }
   }
 }

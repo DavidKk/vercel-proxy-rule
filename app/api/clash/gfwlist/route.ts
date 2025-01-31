@@ -1,21 +1,16 @@
 import { stringify } from 'yaml'
-import { getClashRules } from '@/app/api/clash/rule'
 import { stringifyClashRule } from '@/services/clash/types'
 import { plainText } from '@/initializer/controller'
+import { getGFWList } from './list'
+import { convertToClashRules } from '@/services/gfwlist/clash'
 import { trimAction } from '@/initializer/wrapper'
 
-export const GET = plainText<{ type: string }>(async (_, { params }) => {
-  const { type } = await params
-
-  const { rules } = await trimAction(getClashRules)()
-
+export const GET = plainText(async () => {
+  const gfwRules = await trimAction(getGFWList)()
+  const rules = convertToClashRules(gfwRules)
   const payload = Array.from(
     (function* () {
       for (const rule of rules) {
-        if (rule.action.toUpperCase() !== type.toUpperCase()) {
-          continue
-        }
-
         const content = stringifyClashRule(rule)
         const parts = content.split(',')
         const index = parts.indexOf(rule.action)

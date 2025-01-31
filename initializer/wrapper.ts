@@ -3,6 +3,7 @@ import type { Context } from '@/initializer/controller'
 import { jsonUnauthorized, standardResponseError } from '@/initializer/response'
 import { validateCookie } from '@/services/auth/access'
 import { redirect } from 'next/navigation'
+import { isApiRouter } from '@/utils/env'
 
 export interface AuthContext extends Context {
   $$authorized?: boolean

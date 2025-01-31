@@ -1,9 +1,9 @@
 'use server'
 
+import { withAuthAction } from '@/initializer/wrapper'
 import { fetchClashRules, updateClashRules } from '@/services/clash/rule'
 import { getGistInfo } from '@/services/gist'
 import { isValidClashRule, type ClashRule } from '@/services/clash/types'
-import { withAuthAction } from '@/initializer/wrapper'
 
 export const getClashRules = withAuthAction(async () => {
   const { gistId, gistToken } = getGistInfo()

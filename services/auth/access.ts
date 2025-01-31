@@ -2,6 +2,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { AUTH_TOKEN_NAME } from '@/app/api/auth/constants'
 import { verifyToken } from '@/utils/jwt'
+import { isApiRouter } from '@/utils/env'
 
 export interface CheckAccessOptions {
   redirectUrl?: string
@@ -27,7 +28,11 @@ export async function checkAccess(options?: CheckAccessOptions) {
   const { redirectUrl = '/login' } = options || {}
 
   if (await validateCookie()) {
-    return
+    return true
+  }
+
+  if (await isApiRouter()) {
+    return false
   }
 
   redirect(redirectUrl)
@@ -41,7 +46,11 @@ export async function checkUnAccess(options?: CheckUnAccessOptions) {
   const { redirectUrl = '/' } = options || {}
 
   if (!(await validateCookie())) {
-    return
+    return true
+  }
+
+  if (await isApiRouter()) {
+    return false
   }
 
   redirect(redirectUrl)

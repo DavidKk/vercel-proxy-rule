@@ -1,9 +1,9 @@
 'use server'
 
 import { serialize } from 'cookie'
+import { verify2fa } from '@/services/2fa'
 import { generateToken } from '@/utils/jwt'
 import { AUTH_TOKEN_NAME } from './constants'
-import { verify2fa } from '@/services/2fa'
 
 export async function login(username: string, password: string, token: string) {
   if (!username) {
