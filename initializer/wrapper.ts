@@ -1,9 +1,8 @@
+import { redirect } from 'next/navigation'
 import type { NextRequest } from 'next/server'
 import type { Context } from '@/initializer/controller'
-import { jsonUnauthorized, standardResponseError } from '@/initializer/response'
+import { jsonUnauthorized } from '@/initializer/response'
 import { validateCookie } from '@/services/auth/access'
-import { redirect } from 'next/navigation'
-import { isApiRouter } from '@/utils/env'
 
 export interface AuthContext extends Context {
   $$authorized?: boolean
@@ -37,6 +36,9 @@ export function withAuthAction<A extends any[], R>(request: (...args: A) => Prom
   return action
 }
 
+/**
+ * Trim action handler to return only the action function
+ */
 export function trimAction<A extends any[], R>(action: Action<A, R>) {
   return action.$$
 }

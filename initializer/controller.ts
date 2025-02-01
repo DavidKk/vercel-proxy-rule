@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { getHeaders, runWithContext } from '@/services/context'
 import { isStandardResponse, standardResponseError, stringifyUnknownError } from './response'
 
 export interface Context {
@@ -13,42 +14,49 @@ export interface ContextWithParams<P> extends Context {
 
 export function api(handle: (req: NextRequest, context: Context) => Promise<Record<string, any>>) {
   return async (req: NextRequest, context: Context) => {
-    try {
-      const result = await handle(req, context)
-      if (result instanceof NextResponse) {
-        return result
-      }
+    return runWithContext(async () => {
+      try {
+        const result = await handle(req, context)
+        if (result instanceof NextResponse) {
+          return result
+        }
 
-      const status = 'status' in result ? result.status : 200
-      const headers = 'headers' in result ? result.headers : {}
-      return NextResponse.json(result, { status, headers })
-    } catch (error) {
-      if (error instanceof NextResponse) {
-        return error
-      }
-
-      const result = (() => {
-        if (isStandardResponse(error)) {
+        const status = 'status' in result ? result.status : 200
+        const inputHeaders = 'headers' in result ? result.headers : {}
+        const collectHeaders = getHeaders()
+        const headers = { ...collectHeaders, ...inputHeaders }
+        return NextResponse.json(result, { status, headers })
+      } catch (error) {
+        if (error instanceof NextResponse) {
           return error
         }
 
-        const message = stringifyUnknownError(error)
-        return standardResponseError(message)
-      })()
+        const result = (() => {
+          if (isStandardResponse(error)) {
+            return error
+          }
 
-      return NextResponse.json(result, { status: 500 })
-    }
+          const message = stringifyUnknownError(error)
+          return standardResponseError(message)
+        })()
+
+        return NextResponse.json(result, { status: 500 })
+      }
+    })
   }
 }
 
 export function plainText<P>(handle: (req: NextRequest, context: ContextWithParams<P>) => Promise<string>) {
   return async (req: NextRequest, context: ContextWithParams<P>) => {
-    try {
-      const result = await handle(req, context)
-      return new NextResponse(result, { status: 200 })
-    } catch (error) {
-      const message = stringifyUnknownError(error)
-      return new NextResponse(message, { status: 500 })
-    }
+    return runWithContext(async () => {
+      try {
+        const result = await handle(req, context)
+        const headers = getHeaders()
+        return new NextResponse(result, { status: 200, headers })
+      } catch (error) {
+        const message = stringifyUnknownError(error)
+        return new NextResponse(message, { status: 500 })
+      }
+    })
   }
 }
