@@ -1,9 +1,9 @@
 import { stringify } from 'yaml'
-import { stringifyClashRule } from '@/services/clash/types'
 import { plainText } from '@/initializer/controller'
-import { getGFWList } from './list'
-import { convertToClashRules } from '@/services/gfwlist/clash'
 import { trimAction } from '@/initializer/wrapper'
+import { convertToClashRules } from '@/services/gfwlist/clash'
+import { stringifyClashRule } from '@/services/clash/types'
+import { getGFWList } from './list'
 
 export const GET = plainText(async () => {
   const gfwRules = await trimAction(getGFWList)()

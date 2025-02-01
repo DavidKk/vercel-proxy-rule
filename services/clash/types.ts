@@ -1,5 +1,17 @@
 export type ClashRuleType = 'DOMAIN' | 'DOMAIN-SUFFIX' | 'DOMAIN-KEYWORD' | 'IP-CIDR' | 'IP-CIDR6' | 'SRC-IP-CIDR' | 'SRC-PORT' | 'DST-PORT' | 'GEOIP' | 'MATCH'
 
+export type DefaultAction = 'DIRECT' | 'REJECT'
+
+const DEFAULT_ACTION: DefaultAction[] = ['DIRECT', 'REJECT']
+function normalizeAction(target: string): string {
+  const action = DEFAULT_ACTION.find((action) => action === target.toUpperCase())
+  if (action) {
+    return action
+  }
+
+  return target
+}
+
 export interface ClashBaseRule {
   type: ClashRuleType
   action: string
@@ -18,7 +30,7 @@ export function isValidClashMatchRule(rule: ClashRule): boolean {
 }
 
 export function stringifyClashMatchRule(rule: ClashMatchRule): string {
-  return `${rule.type},${rule.action}`
+  return `${rule.type},${normalizeAction(rule.action)}`
 }
 
 export interface ClashStandardRule extends ClashBaseRule {
@@ -37,7 +49,7 @@ export function isValidClashStandardRule(rule: ClashRule): boolean {
 }
 
 export function stringifyClashStandardRule(rule: ClashStandardRule): string {
-  return `${rule.type},${rule.value},${rule.action}`
+  return `${rule.type},${rule.value},${normalizeAction(rule.action)}`
 }
 
 export interface ClashExtendedRule extends ClashBaseRule {
@@ -55,7 +67,7 @@ export function isValidClashExtendedRule(rule: ClashRule): boolean {
 }
 
 export function stringifyClashExtendedRule(rule: ClashExtendedRule): string {
-  return `${rule.type},${rule.value},${rule.action}${rule.flag ? `,${rule.flag}` : ''}`
+  return `${rule.type},${rule.value},${normalizeAction(rule.action)}${rule.flag ? `,${rule.flag}` : ''}`
 }
 
 export type ClashRule = ClashMatchRule | ClashStandardRule | ClashExtendedRule
