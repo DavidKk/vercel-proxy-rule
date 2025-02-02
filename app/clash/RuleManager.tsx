@@ -68,7 +68,7 @@ export default function RuleManager(props: RuleManagerProps) {
   const addRule = () => {
     const id = guid()
     const newRule: ClashRule = { id, type: 'DOMAIN-SUFFIX', value: '', action: 'DIRECT' }
-    setRules((prev) => [...prev, newRule])
+    setRules((prev) => [newRule, ...prev])
 
     focusNextRef.current = id
   }
