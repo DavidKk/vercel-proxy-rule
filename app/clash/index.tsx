@@ -1,6 +1,7 @@
 import { getClashRules } from '@/app/api/clash/rule'
 import { guid } from '@/utils/guid'
 import RuleManager from './RuleManager'
+import { GettingStart } from './GettingStart'
 
 export async function Clash() {
   const { rules, actions } = await getClashRules()
@@ -9,7 +10,11 @@ export async function Clash() {
   return (
     <div className="p-2 md:p-4 max-w-6xl mx-auto mt-12">
       <h1 className="text-2xl text-center font-bold mb-8">Clash Rules Editor</h1>
-      <RuleManager rules={rulesWithId} actions={actions} />
+      <div className="mb-4">
+        <RuleManager rules={rulesWithId} actions={actions} />
+      </div>
+
+      <GettingStart actions={actions} />
     </div>
   )
 }
