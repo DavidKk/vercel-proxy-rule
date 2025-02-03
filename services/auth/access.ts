@@ -1,8 +1,8 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { AUTH_TOKEN_NAME } from '@/app/api/auth/constants'
 import { verifyToken } from '@/utils/jwt'
 import { isApiRouter } from '@/utils/env'
+import { AUTH_TOKEN_NAME } from './constants'
 
 export interface CheckAccessOptions {
   redirectUrl?: string
