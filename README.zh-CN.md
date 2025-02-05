@@ -17,6 +17,15 @@
 
 参考 [`.env.example`](./.env.example) 文件，设置必要的环境变量。
 
+- `GIST_ID`: GitHub Gist Id
+- `GIST_TOKEN`: GitHub Gist Token
+- `ACCESS_USERNAME`: 管理员用户名
+- `ACCESS_PASSWORD`: 管理员密码
+- `ACCESS_2FA_SECRET`: 2FA 密钥，可以使用 [https://vercel-2fa.vercel.app](https://vercel-2fa.vercel.app) 生成 TOKEN
+- `JWT_SECRET`: JWT 密钥
+- `JWT_EXPIRES_IN`: JWT 过期时间
+- `ZERO_OMEGA_URL`: Zero Omega 配置备份路径
+
 ## 快速开始
 
 1. 创建一个 **GitHub Gist** 并生成一个 **GitHub Access Token**。
