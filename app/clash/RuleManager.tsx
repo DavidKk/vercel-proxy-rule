@@ -224,7 +224,7 @@ export default function RuleManager(props: RuleManagerProps) {
         </div>
 
         <div className="flex gap-2 ml-auto">
-          <button onClick={addRule} className="ms-auto px-4 py-2 bg-blue-500 cursor-pointer text-sm text-white rounded-sm hover:bg-blue-600" type="button">
+          <button onClick={addRule} className="ms-auto px-4 py-2 bg-indigo-500 cursor-pointer text-sm text-white rounded-sm hover:bg-indigo-600" type="button">
             Add
           </button>
 

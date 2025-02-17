@@ -75,34 +75,34 @@ export function GettingStart(props: GettingStartProps) {
         </button>
 
         <pre className="bg-gray-100 p-4 rounded-md shadow-md mt-4">
-          <code className="block font-medium text-gray-700 text-blue-700">rule-providers:</code>
+          <code className="block font-medium text-gray-700 text-indigo-700">rule-providers:</code>
           {ruleProviders.map(({ name, type, behavior, interval, format, url, path }, index) => (
             <code className="block ml-4" key={index}>
-              <span className="ml-2 text-blue-700">{name}</span>
+              <span className="ml-2 text-indigo-700">{name}</span>
               <code className="block ml-4">
                 <code className="block ml-2">
-                  <span className="text-blue-700">type</span>: <span className="text-yellow-600">{type}</span>
+                  <span className="text-indigo-700">type</span>: <span className="text-yellow-600">{type}</span>
                 </code>
                 <code className="block ml-2">
-                  <span className="text-blue-600">behavior</span>: <span className="text-yellow-600">{behavior}</span>
+                  <span className="text-indigo-600">behavior</span>: <span className="text-yellow-600">{behavior}</span>
                 </code>
                 <code className="block ml-2">
-                  <span className="text-blue-600">interval</span>: <span className="text-green-600">{interval}</span>
+                  <span className="text-indigo-600">interval</span>: <span className="text-green-600">{interval}</span>
                 </code>
                 <code className="block ml-2">
-                  <span className="text-blue-600">format</span>: <span className="text-yellow-600">{format}</span>
+                  <span className="text-indigo-600">format</span>: <span className="text-yellow-600">{format}</span>
                 </code>
                 <code className="block ml-2">
-                  <span className="text-blue-600">url</span>: <span className="text-yellow-600">{url}</span>
+                  <span className="text-indigo-600">url</span>: <span className="text-yellow-600">{url}</span>
                 </code>
                 <code className="block ml-2">
-                  <span className="text-blue-600">path</span>: <span className="text-yellow-600">{path}</span>
+                  <span className="text-indigo-600">path</span>: <span className="text-yellow-600">{path}</span>
                 </code>
               </code>
             </code>
           ))}
           <br />
-          <code className="block font-medium text-gray-700 text-blue-700">rules:</code>
+          <code className="block font-medium text-gray-700 text-indigo-700">rules:</code>
           {rules.map(({ type, name, value }, index) => (
             <code className="block ml-4" key={index}>
               <span>-</span>
