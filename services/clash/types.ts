@@ -1,4 +1,4 @@
-export type ClashRuleType = 'DOMAIN' | 'DOMAIN-SUFFIX' | 'DOMAIN-KEYWORD' | 'IP-CIDR' | 'IP-CIDR6' | 'SRC-IP-CIDR' | 'SRC-PORT' | 'DST-PORT' | 'GEOIP' | 'MATCH'
+export type ClashRuleType = 'DOMAIN' | 'DOMAIN-SUFFIX' | 'DOMAIN-KEYWORD' | 'IP-CIDR' | 'IP-CIDR6' | 'SRC-IP-CIDR' | 'SRC-PORT' | 'DST-PORT' | 'PROCESS-NAME' | 'GEOIP' | 'MATCH'
 
 export type DefaultAction = 'DIRECT' | 'REJECT'
 
@@ -38,7 +38,7 @@ export interface ClashStandardRule extends ClashBaseRule {
   value: string
 }
 
-export const STANDARD_RULE_TYPES = ['DOMAIN', 'DOMAIN-SUFFIX', 'DOMAIN-KEYWORD', 'IP-CIDR', 'SRC-IP-CIDR', 'SRC-PORT', 'DST-PORT', 'GEOIP']
+export const STANDARD_RULE_TYPES = ['DOMAIN', 'DOMAIN-SUFFIX', 'DOMAIN-KEYWORD', 'IP-CIDR', 'IP-CIDR6', 'SRC-IP-CIDR', 'PROCESS-NAME', 'GEOIP', 'MATCH']
 
 export function isClashStandardRule(rule: ClashBaseRule): rule is ClashStandardRule {
   return STANDARD_RULE_TYPES.includes(rule.type)

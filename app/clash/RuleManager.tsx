@@ -13,10 +13,9 @@ import Alert from '@/components/Alert'
 import ClearableSelect from '@/components/ClearableSelect'
 import { guid } from '@/utils/guid'
 import SortableItem from './SortableItem'
-import { RULE_TYPE } from './constants'
 import { FilterBar } from './FilterBar'
 import type { ClashRule } from './types'
-import { isValidClashRule } from '@/services/clash/types'
+import { isValidClashRule, STANDARD_RULE_TYPES } from '@/services/clash/types'
 
 export interface RuleManagerProps {
   rules: ClashRule[]
@@ -154,7 +153,11 @@ export default function RuleManager(props: RuleManagerProps) {
   const renderRule = (rule: ClashRule, index: number) => {
     return (
       <SortableItem disabled={isFilterMode} key={rule.id} id={rule.id}>
-        <ClearableSelect value={rule.type} options={RULE_TYPE.map((type) => ({ label: type, value: type }))} onChange={(value) => handleRuleChange(rule.id, 'type', value)} />
+        <ClearableSelect
+          value={rule.type}
+          options={STANDARD_RULE_TYPES.map((type) => ({ label: type, value: type }))}
+          onChange={(value) => handleRuleChange(rule.id, 'type', value)}
+        />
 
         {rule.type === 'MATCH' ? (
           <input value="" placeholder="None" className="flex-grow h-8 text-sm border rounded-sm box-border px-3" disabled />

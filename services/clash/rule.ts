@@ -37,6 +37,7 @@ export async function fetchClashRules(params: FetchGistFileParams) {
           case 'SRC-IP-CIDR':
           case 'SRC-PORT':
           case 'DST-PORT':
+          case 'PROCESS-NAME':
           case 'GEOIP': {
             const [value, action] = rest
             yield { type, value, action } as ClashStandardRule
