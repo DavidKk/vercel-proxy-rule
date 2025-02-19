@@ -1,9 +1,12 @@
 'use client'
 
+import { v4 as uuid } from 'uuid'
 import { useEffect, useRef, useState } from 'react'
 import type { AlertImperativeHandler } from '@/components/Alert'
 import Alert from '@/components/Alert'
 import { ClipboardDocumentCheckIcon } from '@heroicons/react/16/solid'
+import SyntaxHighlighter from 'react-syntax-highlighter'
+import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs'
 
 interface Rule {
   type: string
@@ -22,37 +25,16 @@ interface RuleProvider {
 }
 
 export interface GettingStartProps {
+  secret: string
   actions?: string[]
 }
 
 export function GettingStart(props: GettingStartProps) {
-  const { actions = [] } = props
+  const { secret, actions = [] } = props
   const alertRef = useRef<AlertImperativeHandler>(null)
   const [baseUrl, setBaseUrl] = useState<string>('')
 
-  const handleCopy = () => {
-    const strProviders = ruleProviders.flatMap(({ name, type, behavior, interval, format, url, path }) => [
-      `${name}:`,
-      `  type: ${type}`,
-      `  behavior: ${behavior}`,
-      `  interval: ${interval}`,
-      `  format: ${format}`,
-      `  url: ${url}`,
-      `  path: ${path}`,
-    ])
-
-    const strRules = rules.map(({ type, name, value }) => `  - ${type},${name},${value}`)
-    const textToCopy = ['rule-providers:', strProviders.map((c) => `  ${c}`).join('\n'), 'rules:', strRules.join('\n')]
-    navigator.clipboard.writeText(textToCopy.join('\n').trim())
-
-    alertRef.current?.show('Copied to clipboard')
-  }
-
-  useEffect(() => {
-    const { protocol, hostname } = window.location
-    setBaseUrl(`${protocol}//${hostname}`)
-  }, [])
-
+  const rules = actions.map<Rule>((name) => ({ type: 'RULE-SET', name, value: name }))
   const ruleProviders = actions.map<RuleProvider>((name) => ({
     name,
     type: 'http',
@@ -63,7 +45,65 @@ export function GettingStart(props: GettingStartProps) {
     path: `./rules/${name}.yaml`,
   }))
 
-  const rules = actions.map<Rule>((name) => ({ type: 'RULE-SET', name, value: name }))
+  const markdownContent = `
+mixed-port: 7890
+allow-lan: true
+mode: Rule
+external-controller: 127.0.0.1:12345
+secret: ${secret}
+log-level: info
+
+# @see https://en.clash.wiki/configuration/outbound.html#proxies
+proxies:
+  - name: Clash
+
+proxy-groups:
+  - name: Proxy
+    type: select
+    proxies:
+      - Clash               # Enter above server name
+  - name: MATCH
+    type: select
+    proxies:
+      - Proxy
+      - DIRECT
+  - name: Streaming
+    type: select
+    proxies:
+      - Proxy
+  - name: StreamingSE
+    type: select
+    proxies:
+      - DIRECT
+  - name: ChatGPT
+    type: select
+    proxies:
+      - Proxy                 # China not allowd (incldue HK & TW & MO)
+
+rule-providers: ${ruleProviders
+    .map(
+      ({ name, type, behavior, interval, format, url, path }) => `
+  ${name}:
+    type: ${type}
+    behavior: ${behavior}
+    interval: ${interval}
+    format: ${format}
+    url: ${url}
+    path: ${path}`
+    )
+    .join('')}
+rules:\n${rules.map(({ type, name, value }) => `  - ${type},${name},${value}`).join('\n')}
+`.trim()
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(markdownContent)
+    alertRef.current?.show('Copied to clipboard')
+  }
+
+  useEffect(() => {
+    const { protocol, hostname } = window.location
+    setBaseUrl(`${protocol}//${hostname}`)
+  }, [])
 
   return (
     <div>
@@ -74,44 +114,11 @@ export function GettingStart(props: GettingStartProps) {
           <ClipboardDocumentCheckIcon className="h-5 w-5" />
         </button>
 
-        <pre className="bg-gray-100 p-4 rounded-md shadow-md mt-4">
-          <code className="block font-medium text-gray-700 text-indigo-700">rule-providers:</code>
-          {ruleProviders.map(({ name, type, behavior, interval, format, url, path }, index) => (
-            <code className="block ml-4" key={index}>
-              <span className="ml-2 text-indigo-700">{name}</span>
-              <code className="block ml-4">
-                <code className="block ml-2">
-                  <span className="text-indigo-700">type</span>: <span className="text-yellow-600">{type}</span>
-                </code>
-                <code className="block ml-2">
-                  <span className="text-indigo-600">behavior</span>: <span className="text-yellow-600">{behavior}</span>
-                </code>
-                <code className="block ml-2">
-                  <span className="text-indigo-600">interval</span>: <span className="text-green-600">{interval}</span>
-                </code>
-                <code className="block ml-2">
-                  <span className="text-indigo-600">format</span>: <span className="text-yellow-600">{format}</span>
-                </code>
-                <code className="block ml-2">
-                  <span className="text-indigo-600">url</span>: <span className="text-yellow-600">{url}</span>
-                </code>
-                <code className="block ml-2">
-                  <span className="text-indigo-600">path</span>: <span className="text-yellow-600">{path}</span>
-                </code>
-              </code>
-            </code>
-          ))}
-          <br />
-          <code className="block font-medium text-gray-700 text-indigo-700">rules:</code>
-          {rules.map(({ type, name, value }, index) => (
-            <code className="block ml-4" key={index}>
-              <span>-</span>
-              <span className="ml-2 text-yellow-600">
-                {type},{name},{value}
-              </span>
-            </code>
-          ))}
-        </pre>
+        <div className="bg-gray-100 p-4 rounded-md shadow-md mt-4">
+          <SyntaxHighlighter style={docco} language="yaml">
+            {markdownContent}
+          </SyntaxHighlighter>
+        </div>
       </div>
     </div>
   )

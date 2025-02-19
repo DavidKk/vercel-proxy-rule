@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid'
 import { getClashRules } from '@/app/api/clash/rule'
 import { guid } from '@/utils/guid'
 import RuleManager from './RuleManager'
@@ -14,7 +15,7 @@ export async function Clash() {
         <RuleManager rules={rulesWithId} actions={actions} />
       </div>
 
-      <GettingStart actions={actions} />
+      <GettingStart secret={uuid()} actions={actions} />
     </div>
   )
 }
