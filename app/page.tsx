@@ -1,4 +1,8 @@
-export default function Home() {
+import { checkAccess } from '@/services/auth/access'
+
+export default async function Home() {
+  await checkAccess()
+
   return (
     <div className="flex flex-col items-center pt-20">
       <h1 className="text-4xl font-bold mb-4">Proxy Rule Management</h1>
