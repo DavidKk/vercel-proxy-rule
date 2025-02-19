@@ -1,7 +1,7 @@
 import { checkAccess } from '@/services/auth/access'
 
 export default async function Home() {
-  await checkAccess()
+  await checkAccess({ checkApiRouter: false })
 
   return (
     <div className="flex flex-col items-center pt-20">
