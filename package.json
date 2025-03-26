@@ -2,6 +2,10 @@
   "name": "vercel-proxy-rule",
   "version": "0.1.0",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DavidKk/vercel-proxy-rule.git"
+  },
   "scripts": {
     "commit": "git-cz",
     "ci:coverage": "pnpm test",
@@ -29,6 +33,7 @@
     "@types/react-dom": "^19",
     "@types/react-syntax-highlighter": "^15.5.13",
     "@types/react-window": "^1.8.8",
+    "@vercel/analytics": "^1.5.0",
     "ahooks": "^3.8.4",
     "cookie": "^1.0.2",
     "feather-icons-react": "^0.7.1",

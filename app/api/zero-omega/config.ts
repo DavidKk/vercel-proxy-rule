@@ -1,16 +1,17 @@
 'use server'
 
 import { withAuthAction } from '@/initializer/wrapper'
-import { fetchWithCache } from '@/services/fetch'
+import { readGistFile } from '@/services/gist'
 import type { ZeroOmega } from '@/services/zero-omega/types'
-import { convertArrayBufferToJson } from '@/utils/buffer'
 
 export const getZeroOmegaConfig = withAuthAction(async () => {
-  const zeroOmegaUrl = process.env.ZERO_OMEGA_URL
-  if (!zeroOmegaUrl) {
+  const gistId = process.env.ZERO_OMEGA_GIST_ID
+  const gistToken = process.env.ZERO_OMEGA_GIST_TOKEN
+  if (!gistId || !gistToken) {
     return null
   }
 
-  const response = await fetchWithCache(zeroOmegaUrl)
-  return convertArrayBufferToJson<ZeroOmega>(response)
+  const fileName = 'ZeroOmega.json'
+  const content = await readGistFile({ gistId, gistToken, fileName })
+  return JSON.parse(content) as ZeroOmega
 })

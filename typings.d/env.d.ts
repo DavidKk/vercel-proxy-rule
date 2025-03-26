@@ -14,7 +14,9 @@ declare namespace NodeJS {
     JWT_SECRET: string
     /** JWT Token Expiration Time */
     JWT_EXPIRES_IN: string
-    /** Zero Omega URL */
-    ZERO_OMEGA_URL: string
+    /** Zero Omega Gist ID */
+    ZERO_OMEGA_GIST_ID: string
+    /** Zero Omega Gist Token */
+    ZERO_OMEGA_GIST_TOKEN: string
   }
 }

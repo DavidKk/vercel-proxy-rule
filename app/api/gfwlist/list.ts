@@ -7,6 +7,10 @@ import { convertArrayBufferToString } from '@/utils/buffer'
 import { GFW_LIST_URL } from './constants'
 
 export const getGFWList = withAuthAction(async () => {
+  if (process.env.NODE_ENV === 'development') {
+    return []
+  }
+
   const response = await fetchWithCache(GFW_LIST_URL)
   const text = convertArrayBufferToString(response)
   const buffer = Buffer.from(text, 'base64')

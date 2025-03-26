@@ -24,7 +24,8 @@
 - `ACCESS_2FA_SECRET`: 2FA 密钥，可以使用 [https://vercel-2fa.vercel.app](https://vercel-2fa.vercel.app) 生成 TOKEN
 - `JWT_SECRET`: JWT 密钥
 - `JWT_EXPIRES_IN`: JWT 过期时间
-- `ZERO_OMEGA_URL`: Zero Omega 配置备份路径
+- `ZERO_OMEGA_GIST_ID`: Zero Omega Config Backup Gist Id
+- `ZERO_OMEGA_GIST_TOKEN`: Zero Omega Config Backup Token
 
 ## 快速开始
 

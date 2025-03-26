@@ -10,7 +10,7 @@ export default async function Clash() {
   const rulesWithId = rules.map((rule) => ({ ...rule, id: guid() }))
 
   return (
-    <div className="p-2 md:p-4 max-w-6xl mx-auto mt-12">
+    <div className="p-2 md:p-4 max-w-6xl w-full mx-auto mt-12">
       <h1 className="text-2xl text-center font-bold mb-8">Clash Rules Editor</h1>
 
       <div className="mb-4">

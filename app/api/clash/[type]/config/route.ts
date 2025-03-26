@@ -18,7 +18,7 @@ export const GET = plainText<{ type: string }>(async (_, { params }) => {
     rules.splice(0, 0, ...clashRules)
   }
 
-  const gfwRules = await trimAction(getGFWList)()
+  const gfwRules = await trimAction(getGFWList)().catch(() => [])
   if (gfwRules) {
     const clashRules = convertGFWListToClashRules(gfwRules)
     rules.splice(0, 0, ...clashRules)

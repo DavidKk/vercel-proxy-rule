@@ -26,7 +26,8 @@ Refer to the [`.env.example`](./.env.example) file to set the required environme
 - `ACCESS_2FA_SECRET`: 2FA secret, can use [https://vercel-2fa.vercel.app](https://vercel-2fa.vercel.app) to generate token
 - `JWT_SECRET`: JWT secret
 - `JWT_EXPIRES_IN`: JWT expiration time
-- `ZERO_OMEGA_URL`: ZZero Omega Config Backup URL
+- `ZERO_OMEGA_GIST_ID`: Zero Omega Config Backup URL
+- `ZERO_OMEGA_GIST_TOKEN`: Zero Omega Config Backup Token
 
 ## Quick Start
 

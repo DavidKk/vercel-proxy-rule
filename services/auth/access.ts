@@ -31,7 +31,7 @@ export async function checkAccess(options?: CheckAccessOptions) {
     return true
   }
 
-  if (checkApiRouter && await isApiRouter()) {
+  if (checkApiRouter && (await isApiRouter())) {
     return false
   }
 
