@@ -1,0 +1,28 @@
+import type { DefaultAction, ClashExtendedRule, ClashMatchRule, ClashStandardRule } from './types'
+
+export function parseRuleRaw(raw: string, fallbackAction: DefaultAction = 'DIRECT') {
+  const [type, ...rest] = raw.split(',')
+  switch (type) {
+    case 'MATCH': {
+      const [action = fallbackAction] = rest
+      return { type, action } as ClashMatchRule
+    }
+
+    case 'IP-CIDR6': {
+      const [value, action = fallbackAction, flag] = rest
+      return { type, value, action, flag } as ClashExtendedRule
+    }
+
+    case 'DOMAIN-SUFFIX':
+    case 'DOMAIN-KEYWORD':
+    case 'IP-CIDR':
+    case 'SRC-IP-CIDR':
+    case 'SRC-PORT':
+    case 'DST-PORT':
+    case 'PROCESS-NAME':
+    case 'GEOIP': {
+      const [value, action = fallbackAction] = rest
+      return { type, value, action } as ClashStandardRule
+    }
+  }
+}

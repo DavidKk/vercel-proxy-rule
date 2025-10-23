@@ -1,5 +1,7 @@
 import importPlugin from 'eslint-plugin-import'
 import prettierPlugin from 'eslint-plugin-prettier'
+import simpleImportSortPlugin from 'eslint-plugin-simple-import-sort'
+
 import tsConfig from './eslintrc/ts.mjs'
 import cjsConfig from './eslintrc/cjs.mjs'
 import esmConfig from './eslintrc/esm.mjs'
@@ -22,6 +24,7 @@ export default [
     plugins: {
       'eslint-plugin-import': importPlugin,
       'eslint-plugin-prettier': prettierPlugin,
+      'eslint-plugin-simple-import-sort': simpleImportSortPlugin,
     },
     rules: {
       'max-len': [
@@ -40,7 +43,7 @@ export default [
       'eslint-plugin-import/no-extraneous-dependencies': [
         'warn',
         {
-          devDependencies: ['**/*.spec.ts', '**/*/jest.config.*.ts', 'eslintrc/**/*.mjs', 'scripts/**/*.mjs', 'jest/**/*.ts', '.cz-config.js', '**/eslint.config.mjs'],
+          devDependencies: ['**/*.spec.ts', '**/*/jest.config.*.ts', 'eslintrc/**/*.mjs', 'scripts/**/*.mjs', 'jest/**/*.ts', '.cz-config.js', '**/eslint.config.mjs', 'playwright.config.ts'],
         },
       ],
     },

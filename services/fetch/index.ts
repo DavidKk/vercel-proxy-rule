@@ -56,7 +56,7 @@ export async function fetchWithCache(url: string, options?: FetchOptions) {
     try {
       const response = await fetch(url, options)
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`)
+        throw new Error(`HTTP error! Url: ${url} Status: ${response.status}`)
       }
 
       const data = await response.arrayBuffer()

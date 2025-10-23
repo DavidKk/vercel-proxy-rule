@@ -1,7 +1,9 @@
 import { parse, stringify } from 'yaml'
-import { CLASH_CONFIG_FILE, CLASH_DEFAULT_ACTION } from './constants'
 import { type FetchGistFileParams, readGistFile, writeGistFile } from '@/services/gist'
-import { stringifyClashRule, type ClashConfig, type ClashExtendedRule, type ClashMatchRule, type ClashRule, type ClashStandardRule } from './types'
+import { CLASH_CONFIG_FILE, CLASH_DEFAULT_ACTION } from './constants'
+import type { ClashExtendedRule, ClashMatchRule, ClashStandardRule, ClashConfig, ClashRule } from './types'
+import { stringifyClashRule } from './types'
+import { parseRuleRaw } from './utils'
 
 export async function fetchClashRules(params: FetchGistFileParams) {
   const { gistId, gistToken } = params
@@ -9,47 +11,21 @@ export async function fetchClashRules(params: FetchGistFileParams) {
   const config: ClashConfig = parse(content)
   const strRules = config?.rules
 
+  const rules: (ClashMatchRule | ClashExtendedRule | ClashStandardRule)[] = []
   if (!Array.isArray(strRules) || strRules.length === 0) {
-    return { rules: [], actions: [] }
+    return { rules, actions: [] as string[] }
   }
 
   const actionSet = new Set<string>(CLASH_DEFAULT_ACTION)
-  const rules = Array.from(
-    (function* () {
-      for (const rule of strRules) {
-        const [type, ...rest] = rule.split(',')
-        switch (type) {
-          case 'MATCH': {
-            const [action] = rest
-            yield { type, action } as ClashMatchRule
-            actionSet.add(action)
-            break
-          }
-          case 'IP-CIDR6': {
-            const [value, action, flag] = rest
-            yield { type, value, action, flag } as ClashExtendedRule
-            actionSet.add(action)
-            break
-          }
-          case 'DOMAIN-SUFFIX':
-          case 'DOMAIN-KEYWORD':
-          case 'IP-CIDR':
-          case 'SRC-IP-CIDR':
-          case 'SRC-PORT':
-          case 'DST-PORT':
-          case 'PROCESS-NAME':
-          case 'GEOIP': {
-            const [value, action] = rest
-            yield { type, value, action } as ClashStandardRule
-            actionSet.add(action)
-            break
-          }
-          default:
-            break
-        }
-      }
-    })()
-  )
+  for (const ruleRaw of strRules) {
+    const rule = parseRuleRaw(ruleRaw)
+    if (!rule) {
+      continue
+    }
+
+    actionSet.add(rule.action)
+    rules.push(rule)
+  }
 
   const actions = Array.from(actionSet)
   return { rules, actions, config }
