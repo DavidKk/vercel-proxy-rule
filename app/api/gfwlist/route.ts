@@ -1,8 +1,10 @@
 import { stringify } from 'yaml'
+
 import { plainText } from '@/initializer/controller'
 import { trimAction } from '@/initializer/wrapper'
-import { convertToClashRules } from '@/services/gfwlist/clash'
 import { stringifyClashRule } from '@/services/clash/types'
+import { convertToClashRules } from '@/services/gfwlist/clash'
+
 import { getGFWList } from './list'
 
 export const GET = plainText(async () => {

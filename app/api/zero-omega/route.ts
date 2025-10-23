@@ -1,9 +1,11 @@
 import { stringify } from 'yaml'
-import { stringifyClashRule } from '@/services/clash/types'
+
 import { plainText } from '@/initializer/controller'
 import { trimAction } from '@/initializer/wrapper'
-import { getZeroOmegaConfig } from './config'
+import { stringifyClashRule } from '@/services/clash/types'
 import { convertToClashRules } from '@/services/zero-omega/clash'
+
+import { getZeroOmegaConfig } from './config'
 
 export const GET = plainText(async () => {
   const zeroOmegaConfig = await trimAction(getZeroOmegaConfig)()

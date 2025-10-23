@@ -1,7 +1,9 @@
 import { parse, stringify } from 'yaml'
+
 import { type FetchGistFileParams, readGistFile, writeGistFile } from '@/services/gist'
+
 import { CLASH_CONFIG_FILE, CLASH_DEFAULT_ACTION } from './constants'
-import type { ClashExtendedRule, ClashMatchRule, ClashStandardRule, ClashConfig, ClashRule } from './types'
+import type { ClashConfig, ClashExtendedRule, ClashMatchRule, ClashRule, ClashStandardRule } from './types'
 import { stringifyClashRule } from './types'
 import { parseRuleRaw } from './utils'
 

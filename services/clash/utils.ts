@@ -1,4 +1,4 @@
-import type { DefaultAction, ClashExtendedRule, ClashMatchRule, ClashStandardRule } from './types'
+import type { ClashExtendedRule, ClashMatchRule, ClashStandardRule, DefaultAction } from './types'
 
 export function parseRuleRaw(raw: string, fallbackAction: DefaultAction = 'DIRECT') {
   const [type, ...rest] = raw.split(',')

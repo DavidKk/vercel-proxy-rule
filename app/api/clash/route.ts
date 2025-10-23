@@ -1,8 +1,10 @@
 import type { NextRequest } from 'next/server'
-import { isValidClashRule } from '@/services/clash/types'
+
 import { api } from '@/initializer/controller'
 import { jsonInvalidParameters } from '@/initializer/response'
 import { trimAction, withAuthHandler } from '@/initializer/wrapper'
+import { isValidClashRule } from '@/services/clash/types'
+
 import { getClashRules, putClashRules } from './rule'
 
 export const GET = api(

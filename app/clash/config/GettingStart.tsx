@@ -1,11 +1,12 @@
 'use client'
 
+import { ClipboardDocumentCheckIcon } from '@heroicons/react/16/solid'
 import { useEffect, useRef, useState } from 'react'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs'
-import Alert from '@/components/Alert'
-import { ClipboardDocumentCheckIcon } from '@heroicons/react/16/solid'
+
 import type { AlertImperativeHandler } from '@/components/Alert'
+import Alert from '@/components/Alert'
 
 export interface Rule {
   type: string

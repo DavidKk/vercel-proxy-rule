@@ -1,7 +1,9 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { verifyToken } from '@/utils/jwt'
+
 import { isApiRouter } from '@/utils/env'
+import { verifyToken } from '@/utils/jwt'
+
 import { AUTH_TOKEN_NAME } from './constants'
 
 export interface CheckAccessOptions {

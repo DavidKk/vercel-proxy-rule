@@ -1,4 +1,5 @@
 import type { ClashStandardRule } from '@/services/clash/types'
+
 import type { ZeroOmega } from './types'
 
 export function convertToClashRules(zeroOmega: ZeroOmega): ClashStandardRule[] {

@@ -1,9 +1,10 @@
 'use server'
 
 import { withAuthAction } from '@/initializer/wrapper'
-import { parseGFWList } from '@/services/gfwlist/parse'
 import { fetchWithCache } from '@/services/fetch'
+import { parseGFWList } from '@/services/gfwlist/parse'
 import { convertArrayBufferToString } from '@/utils/buffer'
+
 import { GFW_LIST_URL } from './constants'
 
 export const getGFWList = withAuthAction(async () => {

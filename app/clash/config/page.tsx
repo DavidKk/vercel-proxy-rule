@@ -1,7 +1,9 @@
 import { v4 as uuid } from 'uuid'
+
 import { getClashRules } from '@/app/api/clash/rule'
-import { GettingStart } from './GettingStart'
 import { checkAccess } from '@/services/auth/access'
+
+import { GettingStart } from './GettingStart'
 
 export default async function ConfigPage() {
   await checkAccess()

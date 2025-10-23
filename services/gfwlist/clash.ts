@@ -1,5 +1,6 @@
 import type { ClashStandardRule } from '@/services/clash/types'
 import { tryGetDomain } from '@/utils/url'
+
 import type { GFWRule } from './parse'
 
 export function convertToClashRules(rules: GFWRule[]): ClashStandardRule[] {

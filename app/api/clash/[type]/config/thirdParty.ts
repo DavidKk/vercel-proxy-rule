@@ -1,30 +1,19 @@
 import { parse } from 'yaml'
+
 import { parseRuleRaw } from '@/services/clash/utils'
 import { fetchWithCache } from '@/services/fetch'
 import { convertArrayBufferToString } from '@/utils/buffer'
-import { REJECT_FORWARD_RULES } from './constants'
-import { chunk } from '@/utils/chunk'
-import type { ClashExtendedRule, ClashMatchRule, ClashStandardRule } from '@/services/clash/types'
+
+import { IOS_RULE_SCRIPT_URL } from './constants'
 
 export async function getThirdPartyRejects() {
-  const finalRules: (ClashMatchRule | ClashExtendedRule | ClashStandardRule)[] = []
-  const chunks = chunk(REJECT_FORWARD_RULES, 10)
+  const response = await fetchWithCache(IOS_RULE_SCRIPT_URL, { cacheDuration: 86400 * 1000 })
+  const content = convertArrayBufferToString(response)
+  const doc = parse(content) as Record<'payload', string[]>
+  const raws = doc?.payload || []
+  const rules = raws.map((raw) => parseRuleRaw(raw, 'REJECT'))
 
-  for (const urls of chunks) {
-    const promises = urls.map(async (url) => {
-      const response = await fetchWithCache(url)
-      const content = convertArrayBufferToString(response)
-      const doc = parse(content) as Record<'payload', string[]>
-      return doc?.payload || []
-    })
-
-    const sources = await Promise.allSettled(promises)
-    const contents = sources.filter((source) => source.status === 'fulfilled')
-    const rules = contents.flatMap((itme) => itme.value.map((raw) => parseRuleRaw(raw, 'REJECT')))
-    for (const rule of rules) {
-      rule && finalRules.push(rule)
-    }
-  }
-
-  return finalRules
+  // eslint-disable-next-line no-console
+  console.log(`Fetch ${rules.length} reject rules from ${IOS_RULE_SCRIPT_URL}`)
+  return rules
 }

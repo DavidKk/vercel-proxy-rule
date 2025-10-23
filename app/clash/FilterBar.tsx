@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
 import { BackspaceIcon } from '@heroicons/react/16/solid'
+import { useEffect, useMemo, useState } from 'react'
+
 import ClearableSelect from '@/components/ClearableSelect'
 import { fuzzySearch } from '@/utils/find'
+
 import type { ClashRule } from './types'
 
 export interface FilterBarProps {

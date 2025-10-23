@@ -1,6 +1,6 @@
+import type { ClashStandardRule } from '@/services/clash/types'
 import { convertToClashRules } from '@/services/gfwlist/clash'
 import type { GFWRule } from '@/services/gfwlist/parse'
-import type { ClashStandardRule } from '@/services/clash/types'
 
 describe('convertToClashRules', () => {
   it('should correctly convert domain rules', () => {

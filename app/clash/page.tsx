@@ -1,7 +1,8 @@
 import { getClashRules } from '@/app/api/clash/rule'
-import { guid } from '@/utils/guid'
-import RuleManager from './RuleManager'
 import { checkAccess } from '@/services/auth/access'
+import { guid } from '@/utils/guid'
+
+import RuleManager from './RuleManager'
 
 export default async function Clash() {
   await checkAccess()
