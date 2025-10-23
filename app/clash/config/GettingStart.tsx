@@ -8,6 +8,8 @@ import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs'
 import type { AlertImperativeHandler } from '@/components/Alert'
 import Alert from '@/components/Alert'
 
+import { THIRD_PARTY_REJECT_RULE_PROVIDERS } from './constants'
+
 export interface Rule {
   type: string
   name: string
@@ -80,7 +82,7 @@ proxy-groups:
     proxies:
       - Proxy                 # China not allowd (incldue HK & TW & MO)
 
-rule-providers: ${ruleProviders
+rule-providers: ${ruleProviders.concat(THIRD_PARTY_REJECT_RULE_PROVIDERS)
     .map(
       ({ name, type, behavior, interval, format, url, path }) => `
   ${name}:
@@ -93,6 +95,7 @@ rule-providers: ${ruleProviders
     )
     .join('')}
 rules:\n${rules.map(({ type, name, value }) => `  - ${type},${name},${value}`).join('\n')}
+${THIRD_PARTY_REJECT_RULE_PROVIDERS.map(({ name }) => `  - RULE-SET,${name},REJECT`).join('\n')}
 `.trim()
 
   const handleCopy = () => {

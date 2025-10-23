@@ -9,8 +9,6 @@ import { stringifyClashRule } from '@/services/clash/types'
 import { convertToClashRules as convertGFWListToClashRules } from '@/services/gfwlist/clash'
 import { convertToClashRules as convertZeroOmegaConfigToClashRules } from '@/services/zero-omega/clash'
 
-import { getThirdPartyRejects } from './thirdParty'
-
 export const GET = plainText<{ type: string }>(async (_, { params }) => {
   const { type } = await params
   const { rules } = await trimAction(getClashRules)()
@@ -25,13 +23,6 @@ export const GET = plainText<{ type: string }>(async (_, { params }) => {
   if (gfwRules) {
     const clashRules = convertGFWListToClashRules(gfwRules)
     rules.splice(0, 0, ...clashRules)
-  }
-
-  if (type === 'Reject') {
-    const thirdPartyRejectRuels = await getThirdPartyRejects()
-    for (const rule of thirdPartyRejectRuels) {
-      rule && rules.push(rule)
-    }
   }
 
   const payload = Array.from(

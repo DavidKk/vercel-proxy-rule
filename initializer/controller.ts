@@ -62,3 +62,22 @@ export function plainText<P>(handle: (req: NextRequest, context: ContextWithPara
     })
   }
 }
+
+export function stream<P>(handle: (req: NextRequest, context: ContextWithParams<P>, controller: ReadableStreamDefaultController<any>) => Promise<void>) {
+  return async (req: NextRequest, context: ContextWithParams<P>) => {
+    return runWithContext(async () => {
+      const writeStream = new ReadableStream({
+        async start(controller) {
+          try {
+            await handle(req, context, controller)
+          } finally {
+            controller.close()
+          }
+        },
+      })
+
+      const headers = getHeaders()
+      return new NextResponse(writeStream, { status: 200, headers })
+    })
+  }
+}
