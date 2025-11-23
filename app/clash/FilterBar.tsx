@@ -1,5 +1,5 @@
 import { BackspaceIcon } from '@heroicons/react/16/solid'
-import { useEffect, useMemo, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useState } from 'react'
 
 import ClearableSelect from '@/components/ClearableSelect'
 import { fuzzySearch } from '@/utils/find'
@@ -11,11 +11,33 @@ export interface FilterBarProps {
   onFilter: (rules: ClashRule[]) => void
 }
 
-export function FilterBar(props: FilterBarProps) {
+export interface FilterBarRef {
+  clearFilters: () => void
+  getFilters: () => { typeFilter: string; actionFilter: string; valueFilter: string }
+}
+
+export const FilterBar = forwardRef<FilterBarRef, FilterBarProps>(function FilterBar(props, ref) {
   const { rules, onFilter } = props
   const [valueFilter, setValueFilter] = useState('')
   const [actionFilter, setActionFilter] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
+
+  const clearFilters = () => {
+    setValueFilter('')
+    setActionFilter('')
+    setTypeFilter('')
+  }
+
+  const getFilters = () => ({
+    typeFilter,
+    actionFilter,
+    valueFilter,
+  })
+
+  useImperativeHandle(ref, () => ({
+    clearFilters,
+    getFilters,
+  }))
 
   const uniqueActions = useMemo(() => Array.from(new Set(rules.map((rule) => rule.action))), [rules])
   const uniqueTypes = useMemo(() => Array.from(new Set(rules.map((rule) => rule.type))), [rules])
@@ -68,17 +90,9 @@ export function FilterBar(props: FilterBarProps) {
         onChange={(event) => setValueFilter(event.target.value)}
       />
 
-      <button
-        className="h-8 flex items-center justify-center text-sm border-gray-300 border rounded-sm box-border px-3"
-        onClick={() => {
-          setValueFilter('')
-          setActionFilter('')
-          setTypeFilter('')
-        }}
-        type="button"
-      >
+      <button className="h-8 flex items-center justify-center text-sm border-gray-300 border rounded-sm box-border px-3" onClick={clearFilters} type="button">
         <BackspaceIcon className="h-4 w-4 text-gray-500" />
       </button>
     </div>
   )
-}
+})

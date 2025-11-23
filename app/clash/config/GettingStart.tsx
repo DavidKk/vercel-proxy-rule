@@ -82,7 +82,8 @@ proxy-groups:
     proxies:
       - Proxy                 # China not allowd (incldue HK & TW & MO)
 
-rule-providers: ${ruleProviders.concat(THIRD_PARTY_REJECT_RULE_PROVIDERS)
+rule-providers: ${ruleProviders
+    .concat(THIRD_PARTY_REJECT_RULE_PROVIDERS)
     .map(
       ({ name, type, behavior, interval, format, url, path }) => `
   ${name}:
