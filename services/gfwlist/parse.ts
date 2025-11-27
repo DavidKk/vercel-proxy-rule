@@ -20,7 +20,6 @@ export interface GFWRule {
 }
 
 const DOMAIN_REGEX = /^(?:\*\.)?([a-zA-Z0-9-]+\.[a-zA-Z]{2,})/
-const URL_REGEX = /^(?:https?:\/\/)?([^\/]+)/
 
 export interface ParsedRuleOptions {
   ignoreComments?: boolean

@@ -10,6 +10,7 @@ import { Virtuoso } from 'react-virtuoso'
 import { putClashRules } from '@/app/api/clash/rule'
 import type { AlertImperativeHandler } from '@/components/Alert'
 import Alert from '@/components/Alert'
+import AutocompleteInput from '@/components/AutocompleteInput'
 import ClearableSelect from '@/components/ClearableSelect'
 import { Spinner } from '@/components/Spinner'
 import { type ClashRuleType, isValidClashRule, STANDARD_RULE_TYPES } from '@/services/clash/types'
@@ -200,6 +201,15 @@ export default function RuleManager(props: RuleManagerProps) {
 
           {rule.type === 'MATCH' ? (
             <input value="" placeholder="None" className="flex-grow h-8 text-sm border rounded-sm box-border px-3" disabled />
+          ) : rule.type === 'PROCESS-NAME' ? (
+            <AutocompleteInput
+              ruleId={rule.id}
+              value={rule.value}
+              onChange={(value) => handleRuleChange(rule.id, 'value', value)}
+              placeholder="Search Bundle ID..."
+              className="flex-grow"
+              required
+            />
           ) : (
             <ControlledInput ruleId={rule.id} value={rule.value} onChange={handleValueChange} />
           )}
