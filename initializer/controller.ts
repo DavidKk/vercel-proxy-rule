@@ -15,10 +15,14 @@ export interface ContextWithParams<P> extends Context {
 }
 
 export function api(handle: (req: NextRequest, context: Context) => Promise<Record<string, any>>) {
-  return async (req: NextRequest, context: Context) => {
+  return async (req: NextRequest, context: { params: Promise<any> }) => {
     return runWithContext(async () => {
       try {
-        const result = await handle(req, context)
+        const enhancedContext: Context = {
+          params: context.params,
+          searchParams: req.nextUrl.searchParams,
+        }
+        const result = await handle(req, enhancedContext)
         if (result instanceof NextResponse) {
           return result
         }
@@ -49,10 +53,14 @@ export function api(handle: (req: NextRequest, context: Context) => Promise<Reco
 }
 
 export function plainText<P>(handle: (req: NextRequest, context: ContextWithParams<P>) => Promise<string>) {
-  return async (req: NextRequest, context: ContextWithParams<P>) => {
+  return async (req: NextRequest, context: { params: Promise<any> }) => {
     return runWithContext(async () => {
       try {
-        const result = await handle(req, context)
+        const enhancedContext: ContextWithParams<P> = {
+          params: context.params,
+          searchParams: req.nextUrl.searchParams,
+        }
+        const result = await handle(req, enhancedContext)
         const headers = getHeaders()
         return new NextResponse(result, { status: 200, headers })
       } catch (error) {
@@ -64,12 +72,16 @@ export function plainText<P>(handle: (req: NextRequest, context: ContextWithPara
 }
 
 export function stream<P>(handle: (req: NextRequest, context: ContextWithParams<P>, controller: ReadableStreamDefaultController<any>) => Promise<void>) {
-  return async (req: NextRequest, context: ContextWithParams<P>) => {
+  return async (req: NextRequest, context: { params: Promise<any> }) => {
     return runWithContext(async () => {
+      const enhancedContext: ContextWithParams<P> = {
+        params: context.params,
+        searchParams: req.nextUrl.searchParams,
+      }
       const writeStream = new ReadableStream({
         async start(controller) {
           try {
-            await handle(req, context, controller)
+            await handle(req, enhancedContext, controller)
           } finally {
             controller.close()
           }
