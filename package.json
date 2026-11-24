@@ -36,7 +36,7 @@
     "@types/react-dom": "^19",
     "@types/react-syntax-highlighter": "^15.5.13",
     "@vercel/analytics": "^1.5.0",
-    "@vercel/speed-insights": "^1.2.0",
+    "@vercel/speed-insights": "^2.1.0",
     "ahooks": "^3.8.4",
     "cookie": "^1.0.2",
     "feather-icons-react": "^0.7.1",
